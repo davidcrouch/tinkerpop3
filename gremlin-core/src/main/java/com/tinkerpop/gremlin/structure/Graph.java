@@ -16,8 +16,9 @@ import com.tinkerpop.gremlin.structure.io.kryo.KryoMapper;
 import com.tinkerpop.gremlin.structure.io.kryo.KryoReader;
 import com.tinkerpop.gremlin.structure.io.kryo.KryoWriter;
 import com.tinkerpop.gremlin.structure.strategy.GraphStrategy;
-import com.tinkerpop.gremlin.structure.strategy.SequenceStrategy;
-import com.tinkerpop.gremlin.structure.strategy.StrategyGraph;
+//import com.tinkerpop.gremlin.structure.strategy.SequenceStrategy;
+import com.tinkerpop.gremlin.structure.strategy.Strategy;
+import com.tinkerpop.gremlin.structure.strategy.util.DefaultGraphStrategy;
 import com.tinkerpop.gremlin.structure.util.FeatureDescriptor;
 import org.apache.commons.configuration.Configuration;
 import org.javatuples.Pair;
@@ -176,25 +177,29 @@ public interface Graph extends AutoCloseable {
     }
 
     /**
-     * Constructs a {@link StrategyGraph} from one or more {@link GraphStrategy} objects.  If more than one
-     * {@link GraphStrategy} is supplied they are folded into a single {@link SequenceStrategy}.
+     * Constructs a {@link com.tinkerpop.gremlin.structure.strategy.util.DefaultGraphStrategy} from one or more {@link GraphStrategy} objects.
      */
     @Graph.Helper
-    public default StrategyGraph strategy(final GraphStrategy... strategies) {
+    public default Graph strategy(final Strategy... strategies) {           // TODO: need to consider base graph
         if (strategies.length == 0)
             throw new IllegalArgumentException("Provide at least one GraphStrategy implementation.");
 
-        StrategyGraph strategyGraph = new StrategyGraph(this, strategies[strategies.length-1]);
+        Strategy headStrategy = strategies[strategies.length-1];
+        Graph graph = headStrategy.createGraphStrategy(this);
 
         if (strategies.length == 1)
-            return strategyGraph;
+            return graph;
         else {
-            List<GraphStrategy> remaining = new ArrayList<>(Arrays.asList(strategies));
+            List<Strategy> remaining = new ArrayList<>(Arrays.asList(strategies));
             remaining.remove(remaining.size()-1);
 
-            GraphStrategy remainingArr[] = new GraphStrategy[remaining.size()];
-            return strategyGraph.strategy(remaining.toArray(remainingArr));
+            Strategy remainingArr[] = new Strategy[remaining.size()];
+            return graph.strategy(remaining.toArray(remainingArr));
         }
+    }
+
+    public default <V extends Strategy> V getStrategy() {
+        return null;            //  TODO: finish
     }
 
     /**
