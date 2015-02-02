@@ -1,16 +1,12 @@
-package com.tinkerpop.gremlin.structure.strategy;
+package com.tinkerpop.gremlin.structure.strategy.alternate;
 
 
 import com.tinkerpop.gremlin.structure.*;
-import com.tinkerpop.gremlin.structure.util.ElementHelper;
+import com.tinkerpop.gremlin.structure.strategy.StrategyWrapped;
 import com.tinkerpop.gremlin.structure.util.wrapped.WrappedVertex;
 import com.tinkerpop.gremlin.util.StreamFactory;
 
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.*;
 
 /**
  * Created by davidcrouch on 1/26/2015.
@@ -68,7 +64,7 @@ public interface VertexStrategy extends ElementStrategy, Vertex, Vertex.Iterator
      * @return An iterator of edges meeting the provided specification
      */
     public default Iterator<Edge> edgeIterator(final Direction direction, final String... edgeLabels) {
-        return StreamFactory.stream(getInnerVertex().iterators().edgeIterator(direction, edgeLabels)).map(edge -> graph().getStrategy().createEdgeStrategy(edge, graph())).iterator();
+        return StreamFactory.stream(getInnerVertex().iterators().edgeIterator(direction, edgeLabels)).map(edge -> (Edge)graph().getStrategy().createEdgeStrategy(edge, graph())).iterator();
     }
 
     /**
@@ -79,7 +75,7 @@ public interface VertexStrategy extends ElementStrategy, Vertex, Vertex.Iterator
      * @return An iterator of vertices meeting the provided specification
      */
     public default Iterator<Vertex> vertexIterator(final Direction direction, final String... edgeLabels) {
-        return StreamFactory.stream(getInnerVertex().iterators().vertexIterator(direction, edgeLabels)).map(vertex -> graph().getStrategy().createVertexStrategy(vertex, graph())).iterator();
+        return StreamFactory.stream(getInnerVertex().iterators().vertexIterator(direction, edgeLabels)).map(vertex -> (Vertex)graph().getStrategy().createVertexStrategy(vertex, graph())).iterator();
     }
 
     /**
@@ -87,7 +83,7 @@ public interface VertexStrategy extends ElementStrategy, Vertex, Vertex.Iterator
      */
     @Override
     public default <V> Iterator<VertexProperty<V>> propertyIterator(final String... propertyKeys) {
-        return  StreamFactory.stream(getInnerVertex().iterators().<V>propertyIterator(propertyKeys)).map(property -> graph().getStrategy().createVertexPropertyStrategy(property, graph())).iterator();
+        return  StreamFactory.stream(getInnerVertex().iterators().<V>propertyIterator(propertyKeys)).map(property -> (VertexProperty<V>)graph().getStrategy().createVertexPropertyStrategy(property, graph())).iterator();
     }
 
 

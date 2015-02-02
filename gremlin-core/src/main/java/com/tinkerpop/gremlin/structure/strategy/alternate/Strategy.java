@@ -1,4 +1,4 @@
-package com.tinkerpop.gremlin.structure.strategy;
+package com.tinkerpop.gremlin.structure.strategy.alternate;
 
 import com.tinkerpop.gremlin.structure.*;
 
@@ -9,11 +9,11 @@ import java.util.Iterator;
  */
 public interface Strategy {
 
-    public Graph createGraphStrategy(Graph innerGraph);
-    public Vertex createVertexStrategy(Vertex innerVertex, Graph graph);
-    public Edge  createEdgeStrategy(Edge innerEdge, Graph graph);
-    public <V> VertexProperty<V> createVertexPropertyStrategy(VertexProperty<V> innerVertexProperty, Graph graph);
-    public <V> Property<V> createPropertyStrategy(Property<V> innerProperty, Graph graph);
+    public GraphStrategy createGraphStrategy(Graph innerGraph);
+    public VertexStrategy createVertexStrategy(Vertex innerVertex, GraphStrategy graph);
+    public EdgeStrategy  createEdgeStrategy(Edge innerEdge, GraphStrategy graph);
+    public <V> VertexPropertyStrategy<V> createVertexPropertyStrategy(VertexProperty<V> innerVertexProperty, GraphStrategy graph);
+    public <V> PropertyStrategy<V> createPropertyStrategy(Property<V> innerProperty, GraphStrategy graph);
 
 //    public Iterator<Vertex> createVertexIteratorStrategy(Iterator<Vertex> innerVertexIterator, GraphStrategy graph);
 //    public Iterator<Edge> createEdgeIteratorStrategy(Iterator<Edge> innerEdgeIterator, GraphStrategy graph);

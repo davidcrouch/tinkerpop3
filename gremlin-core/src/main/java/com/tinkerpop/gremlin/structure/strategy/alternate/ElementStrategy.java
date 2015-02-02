@@ -1,8 +1,8 @@
-package com.tinkerpop.gremlin.structure.strategy;
+package com.tinkerpop.gremlin.structure.strategy.alternate;
 
 import com.tinkerpop.gremlin.structure.Element;
-import com.tinkerpop.gremlin.structure.Graph;
 import com.tinkerpop.gremlin.structure.Property;
+import com.tinkerpop.gremlin.structure.strategy.StrategyWrapped;
 import com.tinkerpop.gremlin.util.StreamFactory;
 
 import java.util.*;
@@ -20,6 +20,8 @@ public interface ElementStrategy extends Element, Element.Iterators, StrategyWra
     }
 
     public Element getInnerElement();
+
+    public GraphStrategy graph();
 
 
     /**

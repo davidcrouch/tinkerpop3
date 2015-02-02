@@ -16,9 +16,8 @@ import com.tinkerpop.gremlin.structure.io.kryo.KryoMapper;
 import com.tinkerpop.gremlin.structure.io.kryo.KryoReader;
 import com.tinkerpop.gremlin.structure.io.kryo.KryoWriter;
 import com.tinkerpop.gremlin.structure.strategy.GraphStrategy;
-//import com.tinkerpop.gremlin.structure.strategy.SequenceStrategy;
-import com.tinkerpop.gremlin.structure.strategy.Strategy;
-import com.tinkerpop.gremlin.structure.strategy.util.DefaultGraphStrategy;
+import com.tinkerpop.gremlin.structure.strategy.SequenceStrategy;
+import com.tinkerpop.gremlin.structure.strategy.StrategyGraph;
 import com.tinkerpop.gremlin.structure.util.FeatureDescriptor;
 import org.apache.commons.configuration.Configuration;
 import org.javatuples.Pair;
@@ -177,30 +176,41 @@ public interface Graph extends AutoCloseable {
     }
 
     /**
-     * Constructs a {@link com.tinkerpop.gremlin.structure.strategy.util.DefaultGraphStrategy} from one or more {@link GraphStrategy} objects.
+     * Constructs a {@link com.tinkerpop.gremlin.structure.strategy.alternate.util.DefaultGraphStrategy} from one or more {@link GraphStrategy} objects.
      */
     @Graph.Helper
-    public default Graph strategy(final Strategy... strategies) {           // TODO: need to consider base graph
+    public default StrategyGraph strategy(final GraphStrategy... strategies) {           // TODO: need to consider base graph
+
+//        if (strategies.length == 0)
+//            throw new IllegalArgumentException("Provide at least one GraphStrategy implementation.");
+//
+//        Strategy headStrategy = strategies[strategies.length-1];
+//        Graph graph = headStrategy.createGraphStrategy(this);
+//
+//        if (strategies.length == 1)
+//            return graph;
+//        else {
+//            List<Strategy> remaining = new ArrayList<>(Arrays.asList(strategies));
+//            remaining.remove(remaining.size()-1);
+//
+//            Strategy remainingArr[] = new Strategy[remaining.size()];
+//            return graph.strategy(remaining.toArray(remainingArr));
+//        }
         if (strategies.length == 0)
             throw new IllegalArgumentException("Provide at least one GraphStrategy implementation.");
 
-        Strategy headStrategy = strategies[strategies.length-1];
-        Graph graph = headStrategy.createGraphStrategy(this);
+        StrategyGraph strategyGraph = new StrategyGraph(this, strategies[strategies.length-1]);
 
         if (strategies.length == 1)
-            return graph;
+            return strategyGraph;
         else {
-            List<Strategy> remaining = new ArrayList<>(Arrays.asList(strategies));
+            List<GraphStrategy> remaining = new ArrayList<>(Arrays.asList(strategies));
             remaining.remove(remaining.size()-1);
 
-            Strategy remainingArr[] = new Strategy[remaining.size()];
-            return graph.strategy(remaining.toArray(remainingArr));
-        }
-    }
+            GraphStrategy remainingArr[] = new GraphStrategy[remaining.size()];
+            return strategyGraph.strategy(remaining.toArray(remainingArr));
+        }    }
 
-    public default <V extends Strategy> V getStrategy() {
-        return null;            //  TODO: finish
-    }
 
     /**
      * A collection of global {@link Variables} associated with the graph.

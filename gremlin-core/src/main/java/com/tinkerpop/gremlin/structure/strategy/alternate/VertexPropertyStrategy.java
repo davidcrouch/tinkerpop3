@@ -1,7 +1,7 @@
-package com.tinkerpop.gremlin.structure.strategy;
+package com.tinkerpop.gremlin.structure.strategy.alternate;
 
 import com.tinkerpop.gremlin.structure.*;
-import com.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
+import com.tinkerpop.gremlin.structure.strategy.StrategyWrapped;
 import com.tinkerpop.gremlin.structure.util.wrapped.WrappedVertexProperty;
 import com.tinkerpop.gremlin.util.StreamFactory;
 
@@ -19,6 +19,8 @@ public interface VertexPropertyStrategy<V> extends PropertyStrategy<V>, ElementS
         else
             return getInnerProperty();
     }
+
+    public GraphStrategy graph();
 
     public default VertexProperty<V> getInnerProperty() {
         return (VertexProperty<V>)getInnerElement();
@@ -68,7 +70,7 @@ public interface VertexPropertyStrategy<V> extends PropertyStrategy<V>, ElementS
 
     @Override
     public default <U> Iterator<Property<U>> propertyIterator(final String... propertyKeys) {
-        return  StreamFactory.stream(getInnerProperty().iterators().<U>propertyIterator(propertyKeys)).map(property -> graph().getStrategy().createPropertyStrategy(property, graph())).iterator();
+        return  StreamFactory.stream(getInnerProperty().iterators().<U>propertyIterator(propertyKeys)).map(property -> (Property<U>)graph().getStrategy().createPropertyStrategy(property, graph())).iterator();
     }
 
 }

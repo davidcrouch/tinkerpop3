@@ -1,12 +1,11 @@
-package com.tinkerpop.gremlin.structure.strategy;
+package com.tinkerpop.gremlin.structure.strategy.alternate;
 
 import com.tinkerpop.gremlin.structure.*;
+import com.tinkerpop.gremlin.structure.strategy.StrategyWrapped;
 import com.tinkerpop.gremlin.structure.util.wrapped.WrappedEdge;
 import com.tinkerpop.gremlin.util.StreamFactory;
 
 import java.util.Iterator;
-import java.util.Set;
-import java.util.function.*;
 
 /**
  * Created by davidcrouch on 1/26/2015.
@@ -40,7 +39,7 @@ public interface EdgeStrategy extends ElementStrategy, Edge, Edge.Iterators, Str
      * @return An iterator with 1 or 2 vertices
      */
     public default Iterator<Vertex> vertexIterator(final Direction direction) {
-        return StreamFactory.stream(getInnerEdge().iterators().vertexIterator(direction)).map(vertex -> graph().getStrategy().createVertexStrategy(vertex, graph())).iterator();
+        return StreamFactory.stream(getInnerEdge().iterators().vertexIterator(direction)).map(vertex -> (Vertex)graph().getStrategy().createVertexStrategy(vertex, graph())).iterator();
     }
 
     /**
@@ -48,7 +47,7 @@ public interface EdgeStrategy extends ElementStrategy, Edge, Edge.Iterators, Str
      */
     @Override
     public default <V> Iterator<Property<V>> propertyIterator(final String... propertyKeys) {
-        return  StreamFactory.stream(getInnerElement().iterators().<V>propertyIterator(propertyKeys)).map(property -> graph().getStrategy().createPropertyStrategy(property, graph())).iterator();
+        return  StreamFactory.stream(getInnerElement().iterators().<V>propertyIterator(propertyKeys)).map(property -> (Property<V>)graph().getStrategy().createPropertyStrategy(property, graph())).iterator();
     }
 
 
